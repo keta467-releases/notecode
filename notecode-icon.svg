@@ -1,0 +1,32 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="page" x1="280" y1="138" x2="750" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f2f7ff"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="208" y1="96" x2="740" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#73c7ff"/>
+      <stop offset="1" stop-color="#2d7dd2"/>
+    </linearGradient>
+    <filter id="shadow" x="80" y="60" width="860" height="900" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="24" stdDeviation="34" flood-color="#0f2f57" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <g transform="translate(512 512) scale(1.12) translate(-512 -512)">
+  <g filter="url(#shadow)">
+    <path d="M258 116h398l150 150v604c0 42-34 76-76 76H258c-42 0-76-34-76-76V192c0-42 34-76 76-76Z" fill="url(#page)"/>
+    <path d="M656 116v112c0 42 34 76 76 76h74L656 116Z" fill="#d7ebff"/>
+    <path d="M258 116h398l150 150v94H182V192c0-42 34-76 76-76Z" fill="url(#blue)"/>
+    <path d="M656 116v112c0 42 34 76 76 76h74L656 116Z" fill="#a8d9ff"/>
+    <path d="M244 424h520" stroke="#b7c7d9" stroke-width="34" stroke-linecap="round"/>
+    <path d="M244 548h520" stroke="#c8d6e5" stroke-width="34" stroke-linecap="round"/>
+    <path d="M244 672h380" stroke="#c8d6e5" stroke-width="34" stroke-linecap="round"/>
+    <path d="M244 796h448" stroke="#d7e2ee" stroke-width="34" stroke-linecap="round"/>
+    <path d="M332 238h188" stroke="#ffffff" stroke-width="42" stroke-linecap="round" opacity="0.95"/>
+    <path d="M244 238h16" stroke="#ffffff" stroke-width="42" stroke-linecap="round" opacity="0.95"/>
+  </g>
+
+  <path d="M258 116h398l150 150v604c0 42-34 76-76 76H258c-42 0-76-34-76-76V192c0-42 34-76 76-76Z" fill="none" stroke="#1f5f9f" stroke-width="28" opacity="0.35"/>
+  </g>
+</svg>

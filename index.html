@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notecode - メモ帳の軽さ、モダンエディタの書き心地</title>
+  <meta name="description" content="Windows / macOS 向けの軽量テキストエディタ。メモ帳のような素直な UI と、Monaco Editor によるモダンな編集体験。" />
+  <link rel="icon" type="image/svg+xml" href="notecode-icon.svg" />
+  <style>
+    :root {
+      --accent: #2d7dd2;
+      --accent-light: #73c7ff;
+      --bg: #ffffff;
+      --bg-soft: #f4f8fc;
+      --text: #1c2733;
+      --text-sub: #55677a;
+      --border: #dde6ef;
+      --card: #ffffff;
+      --shadow: 0 8px 30px rgba(29, 78, 137, 0.10);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #10161d;
+        --bg-soft: #161e27;
+        --text: #e7eef5;
+        --text-sub: #9db0c2;
+        --border: #263241;
+        --card: #1a2330;
+        --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+      }
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Hiragino Sans", "Yu Gothic UI", "Segoe UI", "Noto Sans JP", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    a { color: var(--accent); }
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; }
+    .brand img { width: 32px; height: 32px; }
+    nav a { margin-left: 20px; text-decoration: none; color: var(--text-sub); font-size: 0.95rem; }
+    nav a:hover { color: var(--accent); }
+
+    .hero { text-align: center; padding: 64px 0 72px; }
+    .hero img.logo { width: 112px; height: 112px; margin-bottom: 24px; }
+    .hero h1 {
+      font-size: clamp(1.7rem, 4.5vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      margin-bottom: 16px;
+    }
+    .hero p.lead {
+      color: var(--text-sub);
+      font-size: 1.05rem;
+      max-width: 640px;
+      margin: 0 auto 40px;
+    }
+    .dl-buttons {
+      display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-bottom: 14px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 26px; border-radius: 12px;
+      font-size: 1rem; font-weight: 700; text-decoration: none;
+      border: 1.5px solid var(--border);
+      color: var(--text); background: var(--card);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent-light), var(--accent));
+      color: #fff; border: none;
+    }
+    .btn svg { width: 20px; height: 20px; fill: currentColor; }
+    .btn small { display: block; font-weight: 400; font-size: 0.75rem; opacity: 0.85; }
+    .dl-meta { color: var(--text-sub); font-size: 0.88rem; }
+    .dl-meta a { color: var(--text-sub); }
+    .shortcut-tip {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 8px 18px;
+      margin-top: 18px; color: var(--text-sub); font-size: 0.82rem;
+    }
+    .shortcut-item { display: inline-flex; align-items: center; gap: 7px; }
+    .shortcut-item kbd {
+      min-width: 34px; padding: 4px 8px;
+      border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 7px;
+      background: var(--card); color: var(--text);
+      font: 600 0.78rem/1.2 system-ui, sans-serif;
+      box-shadow: 0 1px 2px rgba(0,0,0,.06);
+    }
+
+    .shot { margin: 60px auto 0; max-width: 860px; }
+    .shot img {
+      display: block; width: 100%; height: auto;
+      border-radius: 12px; border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .shot figcaption { margin-top: 14px; color: var(--text-sub); font-size: 0.9rem; }
+
+    .compare {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;
+    }
+    .compare-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 24px;
+    }
+    .compare-card h3 { font-size: 1.02rem; margin-bottom: 6px; }
+    .compare-card .verdict { font-weight: 700; margin-bottom: 10px; font-size: 0.95rem; }
+    .compare-card p:not(.verdict) { color: var(--text-sub); font-size: 0.92rem; }
+    .compare-card.is-notecode { border: 2px solid var(--accent); box-shadow: var(--shadow); }
+    .compare-card.is-notecode .verdict { color: var(--accent); }
+
+    .section { padding: 56px 0; }
+    .section.alt { background: var(--bg-soft); }
+    .section h2 {
+      text-align: center; font-size: 1.5rem; margin-bottom: 12px;
+    }
+    .section p.sub { text-align: center; color: var(--text-sub); margin-bottom: 40px; }
+    .features {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;
+    }
+    .feature {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 24px;
+    }
+    .feature .emoji { font-size: 1.6rem; margin-bottom: 10px; }
+    .feature h3 { font-size: 1.02rem; margin-bottom: 8px; }
+    .feature p { color: var(--text-sub); font-size: 0.92rem; }
+
+    .philosophy {
+      max-width: 720px; margin: 0 auto; color: var(--text-sub); font-size: 0.95rem;
+    }
+    .philosophy strong { color: var(--text); }
+
+    .request {
+      max-width: 720px; margin: 0 auto; text-align: center;
+    }
+    .request .btn { margin-top: 22px; }
+    .request .note { margin-top: 10px; color: var(--text-sub); font-size: 0.82rem; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0; text-align: center; color: var(--text-sub); font-size: 0.88rem;
+    }
+    footer a { color: var(--text-sub); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <img src="notecode-icon.svg" alt="" />
+        Notecode
+      </div>
+      <nav>
+        <a href="#features">特徴</a>
+        <a href="#download">ダウンロード</a>
+        <a href="#request">機能リクエスト</a>
+        <a href="https://github.com/keta467-releases/notecode">GitHub</a>
+      </nav>
+    </header>
+  </div>
+
+  <main>
+    <section class="hero container" id="download">
+      <img class="logo" src="notecode-icon.svg" alt="Notecode アイコン" />
+      <h1>メモ帳の軽さ、<br />モダンエディタの書き心地。</h1>
+      <p class="lead">
+        IDE やコーディング特化のエディタは、メモに使うには機能が多すぎる。
+        Notecode は、複数カーソルや検索・置換など<strong>「書くことに効く編集機能」だけを抜粋</strong>して、
+        メモ帳のような静かな UI に載せた Windows / macOS 向けの軽量テキストエディタです。
+        日常のメモ・下書き・一時的なテキスト編集のための道具です。
+      </p>
+      <div class="dl-buttons">
+        <a class="btn primary" id="dl-win" href="https://github.com/keta467-releases/notecode/releases/latest">
+          <svg viewBox="0 0 24 24"><path d="M3 5.5l7.5-1v7H3v-6zm0 13v-6h7.5v7L3 18.5zM11.5 4.3L21 3v8.5h-9.5v-7.2zm0 15.4v-7.2H21V21l-9.5-1.3z"/></svg>
+          <span>Windows 版<small>インストーラー (.exe)</small></span>
+        </a>
+        <a class="btn primary" id="dl-mac" href="https://github.com/keta467-releases/notecode/releases/latest">
+          <svg viewBox="0 0 24 24"><path d="M16.4 12.7c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3.1 2.4 1.2-.1 1.7-.8 3.2-.8s1.9.8 3.2.8c1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.6-1-2.7-3.9zM14 4.8c.7-.8 1.1-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4z"/></svg>
+          <span>macOS 版<small>Apple Silicon (.dmg)</small></span>
+        </a>
+      </div>
+      <p class="dl-meta">
+        <span id="version">最新版</span> ・ 無料 ・
+        <a href="https://github.com/keta467-releases/notecode/releases">過去のバージョンはこちら</a>
+      </p>
+      <div class="shortcut-tip" aria-label="便利な編集ショートカット">
+        <span class="shortcut-item"><kbd data-key="D">Ctrl D</kbd>同じ語を次々選択</span>
+        <span class="shortcut-item"><kbd data-key="F">Ctrl F</kbd>すばやく検索</span>
+      </div>
+
+      <figure class="shot">
+        <picture>
+          <source media="(prefers-color-scheme: dark)" srcset="screenshot-dark.webp" />
+          <img
+            src="screenshot-light.webp"
+            alt="Notecode のスクリーンショット。タブと左右の分割ペインで、打ち合わせメモとやることリストを並べて編集している"
+            width="2200"
+            height="1150"
+            loading="lazy"
+          />
+        </picture>
+        <figcaption>タブと分割ペイン — メモを並べて、見比べながら書ける</figcaption>
+      </figure>
+    </section>
+
+    <section class="section alt">
+      <div class="container">
+        <h2>「ちょうどいい」を作った</h2>
+        <p class="sub">メモ帳では物足りない。IDE では重すぎる。その間です</p>
+        <div class="compare">
+          <div class="compare-card">
+            <h3>標準のメモ帳</h3>
+            <p class="verdict">軽いが、物足りない</p>
+            <p>
+              すぐ開けて気楽。でも複数カーソルも、まともな検索・置換もなく、
+              少し長いテキストになると編集がつらい。
+            </p>
+          </div>
+          <div class="compare-card is-notecode">
+            <h3>Notecode</h3>
+            <p class="verdict">メモ帳の気軽さのまま、編集だけ強い</p>
+            <p>
+              起動は軽く、UI は静か。それでいて複数カーソル・検索・置換・タブ・分割ペインなど、
+              「書く」に効く機能だけをモダンなエディタから抜粋。
+            </p>
+          </div>
+          <div class="compare-card">
+            <h3>IDE・コード特化エディタ</h3>
+            <p class="verdict">強力だが、メモには過剰</p>
+            <p>
+              プロジェクト管理、Git、拡張機能、デバッガ…。開発には必要でも、
+              メモを 1 枚書くための道具としては機能が多すぎる。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="container">
+        <h2>特徴</h2>
+        <p class="sub">「メモ帳の軽さ」と「モダンなエディタの編集操作のよさ」の組み合わせ</p>
+        <div class="features">
+          <div class="feature">
+            <div class="emoji">🪶</div>
+            <h3>静かで素直な UI</h3>
+            <p>Windows メモ帳をリスペクトした、余計なものがない画面。開発用エディタとは別の、書くことに集中できる道具です。</p>
+          </div>
+          <div class="feature">
+            <div class="emoji">⌨️</div>
+            <h3>モダンな編集体験</h3>
+            <p>エディタ部分には Monaco Editor を採用。複数カーソル、強力な検索・置換など、VS Code に近い入力体験で書けます。</p>
+          </div>
+          <div class="feature">
+            <div class="emoji">🗂️</div>
+            <h3>タブと分割ペイン</h3>
+            <p>複数タブと分割ペインに対応。軽いメモ用途でも、最低限の整理をしながら複数のテキストを扱えます。</p>
+          </div>
+          <div class="feature">
+            <div class="emoji">💾</div>
+            <h3>ファイルを壊さない保存品質</h3>
+            <p>文字コード(UTF-8 / Shift_JIS など)と改行コードを正しく扱い、既存のテキストファイルを壊さず読み書きします。</p>
+          </div>
+          <div class="feature">
+            <div class="emoji">🌙</div>
+            <h3>ダークモード</h3>
+            <p>ライト / ダークのテーマに対応。時間帯や好みに合わせて、目に優しい配色で使えます。</p>
+          </div>
+          <div class="feature">
+            <div class="emoji">📄</div>
+            <h3>テキストファイルに幅広く対応</h3>
+            <p>.txt / .md / .log / .json / .csv / .tsv などの関連付けに対応。ダブルクリックですぐ開けます。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt">
+      <div class="container philosophy">
+        <h2 style="text-align:center; margin-bottom:16px;">設計思想</h2>
+        <p>
+          Notecode は統合開発環境を目指しません。テキストを<strong>書く・開く・整える・保存する</strong>体験に絞り、
+          Git 連携・ターミナル・拡張機能・シンタックスハイライトなどはあえて搭載しません。
+          「メモ帳として自然に使えるか」「UI が重くならないか」を基準に、静かなままのエディタであり続けます。
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="request">
+      <div class="container request">
+        <h2>こんな機能がほしい、を聞かせてください</h2>
+        <p class="sub">Notecodeへの機能リクエストや改善案を、GitHubで受け付けています。</p>
+        <a class="btn" href="https://github.com/keta467-releases/notecode/issues/new?title=%5B%E6%A9%9F%E8%83%BD%E3%83%AA%E3%82%AF%E3%82%A8%E3%82%B9%E3%83%88%5D%20">
+          機能リクエストを送る
+        </a>
+        <p class="note">投稿には GitHub へのログインが必要です。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>
+        © keta467 ・ <a href="https://github.com/keta467-releases/notecode">GitHub リポジトリ</a> ・
+        <a href="https://github.com/keta467-releases/notecode/issues/new">バグ報告</a> ・
+        <a href="https://github.com/keta467-releases/notecode/issues/new?title=%5B%E6%A9%9F%E8%83%BD%E3%83%AA%E3%82%AF%E3%82%A8%E3%82%B9%E3%83%88%5D%20">機能リクエスト</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // 最新リリースから OS 別のダウンロード URL とバージョンを取得する。
+    // 取得に失敗した場合はリリースページへのリンクのまま動作する。
+    fetch("https://api.github.com/repos/keta467-releases/notecode/releases/latest")
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((release) => {
+        const assets = release.assets || [];
+        const exe = assets.find((a) => a.name.endsWith(".exe"));
+        const dmg = assets.find((a) => a.name.endsWith(".dmg"));
+        if (exe) document.getElementById("dl-win").href = exe.browser_download_url;
+        if (dmg) document.getElementById("dl-mac").href = dmg.browser_download_url;
+        if (release.tag_name) {
+          document.getElementById("version").textContent = "最新版 " + release.tag_name;
+        }
+      })
+      .catch(() => {});
+
+    // 訪問者の OS に合わせて主ボタンを並べ替える
+    if (/Mac|iPhone|iPad/.test(navigator.platform)) {
+      const buttons = document.querySelector(".dl-buttons");
+      buttons.appendChild(document.getElementById("dl-win"));
+      document.querySelectorAll("[data-key]").forEach((key) => {
+        key.textContent = `⌘ ${key.dataset.key}`;
+      });
+    }
+  </script>
+  <script data-goatcounter="https://takosuke.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
